@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Odisha || Ramsar Sites</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Nunito:wght@400;500;600;700&display=swap');
+
+  /* ── LIGHT MODE TOKENS (Default) ── */
+  :root {
+    --navy: #0d1b2a;
+    --navy2: #1b2d42;
+    --accent: #f0a500;
+    --accent2: #e07b00;
+    --blue: #1a6faf;
+    --blue2: #0e4d7a;
+    --green: #16a34a;
+    --green-light: #dcfce7;
+    --red: #dc2626;
+    --red-light: #fee2e2;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #cbd5e1;
+    --card: #ffffff;
+    --bg: #f1f5f9;
+    --header: #0d1b2a;
+    --option-bg: #fafbfc;
+    --option-hover: #eff6ff;
+    --exp-bg: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  }
+
+  /* ── DARK MODE TOKENS ── */
+  [data-theme="dark"] {
+    --navy: #1e293b;
+    --navy2: #0f172a;
+    --accent: #f59e0b;
+    --accent2: #d97706;
+    --blue: #3b82f6;
+    --blue2: #60a5fa;
+    --green: #22c55e;
+    --green-light: #064e3b;
+    --red: #ef4444;
+    --red-light: #7f1d1d;
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --border: #334155;
+    --card: #0f172a;
+    --bg: #020617;
+    --header: #020617;
+    --option-bg: #1e293b;
+    --option-hover: #334155;
+    --exp-bg: linear-gradient(135deg, #1e293b, #0f172a);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--header);
+    color: #fff;
+    padding: 0 24px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+  }
+  .header-logo { font-family: 'Rajdhani', sans-serif; font-size: 1.35rem; font-weight: 700; letter-spacing: 2px; color: var(--accent); }
+  .header-logo span { color: #fff; }
+  .header-controls { display: flex; align-items: center; gap: 15px; }
+
+  .theme-toggle-btn {
+    background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 6px 14px; border-radius: 6px; font-family: 'Nunito', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .theme-toggle-btn:hover { background: rgba(240,165,0,0.15); }
+
+  .header-timer {
+    display: flex; align-items: center; gap: 8px; background: rgba(240,165,0,0.15); border: 1px solid rgba(240,165,0,0.4); border-radius: 6px; padding: 4px 12px; font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; font-weight: 600; color: var(--accent);
+  }
+
+  /* ── LAYOUT (Updated for large monitors) ── */
+  .main-layout { 
+    display: flex; 
+    flex: 1; 
+    max-width: 1400px; /* Increased max-width */
+    margin: 0 auto; 
+    width: 100%; 
+    padding: 30px 24px 80px; 
+    gap: 40px; /* Increased gap to fix the 'chipka hua' look */
+  }
+
+  /* ── SCOREBOARD PANEL ── */
+  .scoreboard { 
+    width: 260px; /* Slightly wider */
+    flex-shrink: 0; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+    position: sticky; 
+    top: 90px; 
+    align-self: flex-start; 
+  }
+  .score-card { background: var(--card); border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.07); border: 1px solid var(--border); }
+  .score-card-header { background: var(--navy); color: #fff; padding: 10px 16px; font-family: 'Rajdhani', sans-serif; font-size: 0.8rem; letter-spacing: 1.5px; font-weight: 600; text-transform: uppercase; }
+  .score-table { width: 100%; border-collapse: collapse; }
+  .score-table tr { border-bottom: 1px solid var(--border); }
+  .score-table tr:last-child { border-bottom: none; }
+  .score-table td { padding: 9px 16px; font-size: 0.82rem; font-weight: 600; color: var(--text); }
+  .score-table td:last-child { text-align: right; }
+  
+  .badge { display: inline-block; min-width: 28px; padding: 2px 7px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-align: center; }
+  .badge-total   { background: var(--border); color: var(--text); }
+  .badge-attempted { background: rgba(59, 130, 246, 0.2); color: var(--blue); }
+  .badge-correct { background: var(--green-light); color: var(--green); }
+  .badge-incorrect { background: var(--red-light); color: var(--red); }
+  .badge-remaining { background: rgba(245, 158, 11, 0.2); color: var(--accent); }
+
+  .progress-wrap { padding: 10px 16px 14px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 0.72rem; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+  .progress-bar-bg { height: 7px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--accent)); border-radius: 99px; transition: width 0.4s ease; }
+
+  /* Question Navigator */
+  .qnav-card { background: var(--card); border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.07); overflow: hidden; }
+  .qnav-header { background: var(--navy); color: #fff; padding: 10px 16px; font-family: 'Rajdhani', sans-serif; font-size: 0.8rem; letter-spacing: 1.5px; font-weight: 600; text-transform: uppercase; }
+  .qnav-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; padding: 12px; max-height: 240px; overflow-y: auto; }
+  .qnav-btn { width: 100%; aspect-ratio: 1; border: 1.5px solid var(--border); border-radius: 6px; background: var(--card); cursor: pointer; font-size: 0.7rem; font-weight: 700; color: var(--text); transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .qnav-btn:hover { border-color: var(--blue); color: var(--blue); }
+  .qnav-btn.current { border-color: var(--blue); background: var(--blue); color: #fff; }
+  .qnav-btn.correct { border-color: var(--green); background: var(--green-light); color: var(--green); }
+  .qnav-btn.incorrect { border-color: var(--red); background: var(--red-light); color: var(--red); }
+
+  .legend { display: flex; flex-direction: column; gap: 5px; padding: 10px 12px 12px; border-top: 1px solid var(--border); }
+  .legend-item { display: flex; align-items: center; gap: 7px; font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  /* ── MAIN QUESTION AREA ── */
+  .question-area { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; }
+
+  .exam-bar { background: var(--card); border-radius: 10px; padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .exam-bar-title { font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: 0.5px; }
+  .exam-bar-meta { font-size: 0.75rem; color: var(--muted); font-weight: 600; }
+
+  .q-category { display: inline-flex; align-items: center; gap: 5px; background: rgba(26, 111, 175, 0.1); border: 1px solid rgba(26, 111, 175, 0.3); color: var(--blue); font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
+
+  .question-card { background: var(--card); border-radius: 14px; padding: 28px 32px; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.07); flex: 1; }
+  .q-top { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 22px; }
+  .q-number { background: var(--navy); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-size: 1rem; font-weight: 700; padding: 4px 10px; border-radius: 6px; white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+  .q-text { font-size: 1.05rem; font-weight: 600; line-height: 1.6; color: var(--text); }
+  .q-hindi { font-size: 0.88rem; color: var(--muted); margin-top: 4px; font-weight: 500; }
+
+  /* Options */
+  .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+  
+  .option-btn { display: flex; align-items: center; gap: 12px; padding: 13px 18px; border-radius: 9px; border: 2px solid var(--border); background: var(--option-bg); cursor: pointer; text-align: left; font-family: 'Nunito', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--text); transition: all 0.18s; position: relative; overflow: hidden; }
+  .option-btn:hover:not(:disabled) { border-color: var(--blue); background: var(--option-hover); color: var(--blue); transform: translateY(-1px); box-shadow: 0 3px 10px rgba(26,111,175,0.12); }
+  .option-btn:disabled { cursor: not-allowed; }
+
+  .option-key { width: 28px; height: 28px; border-radius: 50%; background: var(--navy); color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.18s; }
+  .option-btn:hover:not(:disabled) .option-key { background: var(--blue); }
+
+  .option-btn.correct-opt { border-color: var(--green); background: var(--green-light); color: var(--green); animation: popIn 0.3s ease; }
+  .option-btn.correct-opt .option-key { background: var(--green); }
+  .option-btn.incorrect-opt { border-color: var(--red); background: var(--red-light); color: var(--red); animation: shake 0.35s ease; }
+  .option-btn.incorrect-opt .option-key { background: var(--red); }
+  .result-icon { margin-left: auto; font-size: 1.1rem; font-weight: 700; flex-shrink: 0; }
+
+  .explanation-box { margin-top: 20px; background: var(--exp-bg); border: 1px solid var(--blue); border-radius: 10px; padding: 14px 18px; font-size: 0.83rem; color: var(--text); line-height: 1.6; display: none; animation: fadeIn 0.3s ease; }
+  .explanation-box.show { display: block; }
+  .explanation-box strong { font-weight: 700; color: var(--accent); }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes popIn { 0% { transform: scale(0.96); } 60% { transform: scale(1.02); } 100% { transform: scale(1); } }
+  @keyframes shake { 0%,100% { transform: translateX(0); } 20%,60% { transform: translateX(-5px); } 40%,80% { transform: translateX(5px); } }
+
+  /* ── NAVIGATION ── */
+  .nav-bar { background: var(--card); border-radius: 12px; padding: 14px 20px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .nav-btn { display: flex; align-items: center; gap: 8px; padding: 10px 22px; border-radius: 8px; border: 2px solid var(--navy); background: var(--navy); color: #fff; font-family: 'Nunito', sans-serif; font-size: 0.88rem; font-weight: 700; cursor: pointer; transition: all 0.18s; letter-spacing: 0.3px; }
+  .nav-btn:hover:not(:disabled) { background: var(--blue2); border-color: var(--blue2); transform: translateY(-1px); }
+  .nav-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+  .nav-btn.primary { background: var(--accent); border-color: var(--accent); color: #1a1a1a; }
+  .nav-btn.primary:hover:not(:disabled) { background: var(--accent2); border-color: var(--accent2); }
+  .q-counter-pill { background: var(--bg); border: 1px solid var(--border); border-radius: 20px; padding: 6px 16px; font-size: 0.8rem; font-weight: 700; color: var(--muted); font-family: 'Rajdhani', sans-serif; letter-spacing: 0.5px; }
+
+  /* ── RESULTS SCREEN ── */
+  .results-screen { display: none; background: var(--card); border-radius: 16px; padding: 40px; border: 1px solid var(--border); box-shadow: 0 4px 24px rgba(0,0,0,0.09); flex: 1; animation: fadeIn 0.5s ease; }
+  .results-screen.show { display: block; }
+  
+  .results-top { display: flex; flex-direction: column; align-items: center; gap: 24px; text-align: center; }
+  .result-score-circle { width: 140px; height: 140px; border-radius: 50%; background: conic-gradient(var(--green) calc(var(--pct) * 3.6deg), var(--border) 0deg); display: flex; align-items: center; justify-content: center; position: relative; transition: background 0.1s linear; }
+  .result-score-inner { width: 110px; height: 110px; border-radius: 50%; background: var(--card); display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .result-pct { font-family: 'Rajdhani', sans-serif; font-size: 2rem; font-weight: 700; color: var(--green); line-height: 1; }
+  .result-pct-label { font-size: 0.7rem; color: var(--muted); font-weight: 600; }
+  .result-title { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--text); }
+  
+  .result-stats { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+  .result-stat { background: var(--bg); border-radius: 10px; padding: 14px 22px; text-align: center; border: 1px solid var(--border); min-width: 100px; }
+  .result-stat-num { font-family: 'Rajdhani', sans-serif; font-size: 1.6rem; font-weight: 700; }
+  .result-stat-label { font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+  
+  .results-actions { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-top: 30px; }
+  .btn-outline { background: transparent; color: var(--red); border: 2px solid var(--red); font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; font-weight: 700; padding: 10px 24px; border-radius: 9px; cursor: pointer; transition: all 0.2s; letter-spacing: 0.5px; }
+  .btn-outline:hover { background: var(--red-light); transform: translateY(-2px); }
+  .restart-btn { padding: 10px 32px; border-radius: 9px; border: none; background: var(--navy); color: var(--accent); font-family: 'Rajdhani', sans-serif; font-size: 1.05rem; font-weight: 700; letter-spacing: 1px; cursor: pointer; transition: all 0.2s; }
+  .restart-btn:hover { background: var(--blue2); color: #fff; transform: translateY(-2px); }
+
+  /* Detailed Table */
+  .section-title { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; margin: 40px 0 15px; color: var(--text); text-align: left; }
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: var(--card); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
+  thead { background: var(--bg); }
+  th { padding: 14px 16px; font-weight: 700; color: var(--muted); border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.75rem; }
+  td { padding: 14px 16px; border-bottom: 1px solid var(--border); vertical-align: top; line-height: 1.5; color: var(--text); }
+  tr:last-child td { border-bottom: none; }
+  
+  .status-badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; }
+  .badge-correct { background: var(--green-light); color: var(--green); }
+  .badge-wrong   { background: var(--red-light); color: var(--red); }
+  .badge-skipped { background: var(--border); color: var(--text); }
+
+
+  /* ── 📱 MOBILE RESPONSIVE QUERIES ── */
+  @media (max-width: 950px) {
+    .main-layout { 
+      flex-direction: column; 
+      padding: 16px 12px 80px; 
+      gap: 24px; 
+    }
+    .question-area { 
+      order: -1; /* Keeps the question at the top on mobile */
+      width: 100%; 
+    }
+    .scoreboard { 
+      width: 100%; 
+      position: static; /* Removes sticky behavior */
+      order: 2; /* Moves scoreboard below the question */
+      display: flex; 
+      flex-direction: row; 
+      flex-wrap: wrap; 
+      gap: 16px;
+    }
+    .score-card, .qnav-card {
+      flex: 1;
+      min-width: 280px;
+    }
+    .qnav-grid {
+      max-height: 200px; /* Scrollable grid on mobile */
+    }
+    .header-logo { font-size: 1.15rem; }
+    .header-timer { font-size: 0.95rem; }
+  }
+
+  @media (max-width: 680px) { 
+    .options-grid { grid-template-columns: 1fr; } 
+  }
+
+  @media (max-width: 600px) {
+    .scoreboard { flex-direction: column; }
+    .question-card { padding: 20px 16px; }
+    .q-text { font-size: 0.95rem; }
+    .option-btn { font-size: 0.85rem; padding: 12px 14px; }
+    
+    .results-actions { flex-direction: column; width: 100%; }
+    .results-actions button { width: 100%; }
+    
+    .table-wrap { font-size: 0.75rem; }
+    th, td { padding: 10px 8px; }
+    
+    .exam-bar-meta { display: none; } /* Hide extra text to save space */
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-logo">ODISHA |<span>| Ramsar Sites</span></div>
+  <div class="header-controls">
+    <div class="header-timer" id="timerDisplay">⏱ 00:00</div>
+    <button id="themeToggle" class="theme-toggle-btn" onclick="toggleTheme()">🌙 Dark</button>
+  </div>
+</header>
+
+<div class="main-layout">
+
+  <!-- SCOREBOARD PANEL -->
+  <aside class="scoreboard">
+    <div class="score-card">
+      <div class="score-card-header">📊 Live Score</div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Progress</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+      <table class="score-table">
+        <tr><td>Total Questions</td><td><span class="badge badge-total" id="sTotal">0</span></td></tr>
+        <tr><td>Attempted</td><td><span class="badge badge-attempted" id="sAttempted">0</span></td></tr>
+        <tr><td>✔ Correct</td><td><span class="badge badge-correct" id="sCorrect">0</span></td></tr>
+        <tr><td>✘ Incorrect</td><td><span class="badge badge-incorrect" id="sIncorrect">0</span></td></tr>
+        <tr><td>Remaining</td><td><span class="badge badge-remaining" id="sRemaining">0</span></td></tr>
+      </table>
+    </div>
+
+    <div class="qnav-card">
+      <div class="qnav-header">📋 Question Panel</div>
+      <div class="qnav-grid" id="qnavGrid"></div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Current</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--green-light);border:1px solid var(--green)"></div> Correct</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--red-light);border:1px solid var(--red)"></div> Incorrect</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div> Not Visited</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- QUESTION AREA -->
+  <main class="question-area">
+    <div class="exam-bar">
+      <div class="exam-bar-title">ODISHA || Ramsar Sites Practice Test</div>
+      <div class="exam-bar-meta">OSSC | OSSSC | OPSC | Odisha Police</div>
+    </div>
+
+    <div id="questionWrapper"></div>
+
+    <div class="nav-bar" id="navBar">
+      <button class="nav-btn" id="prevBtn" onclick="navigate(-1)" disabled>◀ Previous</button>
+      <div class="q-counter-pill" id="qCounterPill">Q 1 / 60</div>
+      <button class="nav-btn primary" id="nextBtn" onclick="navigate(1)">Next ▶</button>
+    </div>
+
+    <!-- NEW RESULTS SCREEN WITH TABLE & EXPORT -->
+    <div class="results-screen" id="resultsScreen">
+      <div class="results-top">
+        <div class="result-title">🎉 Test Completed!</div>
+        <div class="result-score-circle" id="scoreCircle">
+          <div class="result-score-inner">
+            <div class="result-pct" id="resultPct">0%</div>
+            <div class="result-pct-label">Score</div>
+          </div>
+        </div>
+        <div class="result-stats">
+          <div class="result-stat"><div class="result-stat-num" id="rTotal" style="color:var(--text)">0</div><div class="result-stat-label">Total</div></div>
+          <div class="result-stat"><div class="result-stat-num" id="rCorrect" style="color:var(--green)">0</div><div class="result-stat-label">Correct</div></div>
+          <div class="result-stat"><div class="result-stat-num" id="rIncorrect" style="color:var(--red)">0</div><div class="result-stat-label">Incorrect</div></div>
+          <div class="result-stat"><div class="result-stat-num" id="rSkipped" style="color:var(--accent)">0</div><div class="result-stat-label">Skipped</div></div>
+        </div>
+      </div>
+
+      <div class="results-actions">
+        <button class="btn-outline" onclick="exportWrongToExcel()">⬇ Download Incorrect Questions</button>
+        <button class="restart-btn" onclick="restartTest()">↺ RESTART TEST</button>
+      </div>
+
+      <div class="section-title">Detailed Answer Review</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Category</th><th>Question</th><th>Your Answer</th><th>Correct Answer</th><th>Status</th></tr>
+          </thead>
+          <tbody id="results-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   THEME TOGGLE
+══════════════════════════════════════════ */
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('themeToggle').innerHTML = isDark ? '🌙 Dark' : '☀️ Light';
+}
+
+/* ══════════════════════════════════════════
+   QUESTION BANK 
+══════════════════════════════════════════ */
+const questions = [
+  {"q": "Chilika Lake is the largest ________ in Asia.", "h": "", "opts": ["Freshwater lake", "Brackish water lagoon", "Saltwater lake", "Artificial reservoir"], "ans": 1, "cat": "Chilika Lake", "exp": "Chilika Lake is the largest brackish water lagoon in Asia."},
+  {"q": "Bhitarkanika Mangroves are mainly located in which district of Odisha?", "h": "", "opts": ["Puri", "Kendrapara", "Ganjam", "Cuttack"], "ans": 1, "cat": "Bhitarkanika Mangroves", "exp": "It is the core mangrove region of Odisha coastline."},
+  {"q": "Hirakud Reservoir is built on which river?", "h": "", "opts": ["Brahmani", "Godavari", "Mahanadi", "Baitarani"], "ans": 2, "cat": "Hirakud Reservoir", "exp": "Hirakud Dam is constructed across the Mahanadi River near Sambalpur."},
+  {"q": "Tampara Lake is located in which district of Odisha?", "h": "", "opts": ["Puri", "Ganjam", "Kendrapara", "Sambalpur"], "ans": 1, "cat": "Tampara Lake", "exp": "Tampara Lake is situated in Ganjam district, southern Odisha."},
+  {"q": "Ansupa Lake is located in which district of Odisha?", "h": "", "opts": ["Puri", "Kendrapara", "Cuttack", "Ganjam"], "ans": 2, "cat": "Ansupa Lake", "exp": "Ansupa Lake is situated in Cuttack district."},
+  {"q": "Satkosia is a:", "h": "", "opts": ["Lagoon", "Mangrove Forest", "Gorge", "Reservoir"], "ans": 2, "cat": "Satkosia Gorge", "exp": "Satkosia is a deep and narrow river valley (gorge) formed by the Mahanadi River."},
+  {"q": "Which combination correctly forms the water of Chilika Lake?", "h": "", "opts": ["Rainwater + Groundwater", "Fresh Water + Sea Water", "River Water + Glacier Water", "Sea Water + Distilled Water"], "ans": 1, "cat": "Chilika Lake", "exp": "The mixing of river water and sea water creates brackish water, making Chilika a unique lagoon."},
+  {"q": "Chilika Lake is located in which Indian state?", "h": "", "opts": ["West Bengal", "Andhra Pradesh", "Odisha", "Tamil Nadu"], "ans": 2, "cat": "Chilika Lake", "exp": "Chilika is situated on the east coast of Odisha and is internationally famous for its biodiversity."},
+  {"q": "Bhitarkanika is famous for which animal?", "h": "", "opts": ["Tiger", "Elephant", "Saltwater crocodile", "Leopard"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "India’s one of the largest populations of saltwater crocodiles is found here."},
+  {"q": "Hirakud is a:", "h": "", "opts": ["Natural Lake", "Lagoon", "Artificial Reservoir", "Mangrove Forest"], "ans": 2, "cat": "Hirakud Reservoir", "exp": "It is a man-made freshwater reservoir formed by the Hirakud Dam."},
+  {"q": "Tampara is a:", "h": "", "opts": ["Lagoon", "Mangrove Forest", "Coastal Freshwater Lake", "Artificial Reservoir"], "ans": 2, "cat": "Tampara Lake", "exp": "Tampara is a natural freshwater coastal lake, not a lagoon or reservoir."},
+  {"q": "Ansupa Lake is best known as a:", "h": "", "opts": ["Lagoon", "Artificial Reservoir", "Freshwater Oxbow Lake", "Mangrove Forest"], "ans": 2, "cat": "Ansupa Lake", "exp": "It is Odisha's largest freshwater oxbow lake."},
+  {"q": "Satkosia Gorge is formed by which river?", "h": "", "opts": ["Baitarani", "Brahmani", "Mahanadi", "Rushikulya"], "ans": 2, "cat": "Satkosia Gorge", "exp": "The Mahanadi River has carved the Satkosia Gorge over thousands of years."},
+  {"q": "Chilika Lake is mainly important because it is a:", "h": "", "opts": ["Freshwater reservoir", "Desert ecosystem", "Coastal wetland", "Mountain lake"], "ans": 2, "cat": "Chilika Lake", "exp": "Chilika is one of India's most important coastal wetlands and has international recognition under the Ramsar Convention."},
+  {"q": "Chilika Lake is connected to which water body?", "h": "", "opts": ["Arabian Sea", "Indian Ocean", "Bay of Bengal", "Gulf of Mannar"], "ans": 2, "cat": "Chilika Lake", "exp": "The lake remains connected to the Bay of Bengal through a sea mouth, allowing water exchange."},
+  {"q": "Bhitarkanika ecosystem is mainly a:", "h": "", "opts": ["Desert ecosystem", "Mountain ecosystem", "Mangrove ecosystem", "Grassland ecosystem"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "Mangrove = salt-tolerant coastal forest."},
+  {"q": "Which structure creates the Hirakud Reservoir?", "h": "", "opts": ["Barrage", "Canal", "Hirakud Dam", "Bridge"], "ans": 2, "cat": "Hirakud Reservoir", "exp": "Water stored behind the dam forms the reservoir."},
+  {"q": "Tampara Lake was designated as a Ramsar Site in:", "h": "", "opts": ["1981", "2002", "2021", "2022"], "ans": 3, "cat": "Tampara Lake", "exp": "It became a Ramsar Site in 2022."},
+  {"q": "Ansupa Lake is associated with which river?", "h": "", "opts": ["Brahmani", "Mahanadi", "Baitarani", "Rushikulya"], "ans": 1, "cat": "Ansupa Lake", "exp": "It lies near the floodplain of the Mahanadi River."},
+  {"q": "Satkosia Gorge is mainly spread across which two districts?", "h": "", "opts": ["Puri and Khordha", "Ganjam and Gajapati", "Angul and Nayagarh", "Sambalpur and Bargarh"], "ans": 2, "cat": "Satkosia Gorge", "exp": "These are the two most important districts associated with Satkosia in competitive exams."},
+  {"q": "Which feature maintains the ecological balance of Chilika Lake?", "h": "", "opts": ["Dam", "Sea Mouth", "Canal", "Bridge"], "ans": 1, "cat": "Chilika Lake", "exp": "The sea mouth allows regular exchange of water between Chilika Lake and the Bay of Bengal."},
+  {"q": "The water of Chilika Lake is known as:", "h": "", "opts": ["Fresh water", "Salt water", "Brackish water", "Distilled water"], "ans": 2, "cat": "Chilika Lake", "exp": "Brackish water is formed by the mixing of fresh water from rivers and salt water from the sea."},
+  {"q": "Which type of roots are found in mangrove trees?", "h": "", "opts": ["Tap roots", "Fibrous roots", "Pneumatophores", "Aerial seeds"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "Pneumatophores = breathing roots for oxygen in muddy soil."},
+  {"q": "The primary purpose of constructing Hirakud Dam was:", "h": "", "opts": ["Tourism only", "Flood Control", "Shipping only", "Salt production"], "ans": 1, "cat": "Hirakud Reservoir", "exp": "It was mainly built to control floods in the Mahanadi basin, along with irrigation and power generation."},
+  {"q": "Tampara Lake is important mainly because of its:", "h": "", "opts": ["Gold mines", "Wetland biodiversity", "Coal reserves", "Petroleum resources"], "ans": 1, "cat": "Tampara Lake", "exp": "Rich biodiversity is the main reason for its Ramsar recognition."},
+  {"q": "Ansupa Lake became a Ramsar Site in:", "h": "", "opts": ["2002", "2015", "2021", "2022"], "ans": 3, "cat": "Ansupa Lake", "exp": "Ansupa Lake was designated as a Ramsar Site in 2022."},
+  {"q": "Which protected area is associated with Satkosia Gorge?", "h": "", "opts": ["Similipal Tiger Reserve", "Satkosia Tiger Reserve", "Bhitarkanika National Park", "Debrigarh Wildlife Sanctuary"], "ans": 1, "cat": "Satkosia Gorge", "exp": "The gorge lies within the protected landscape of the Satkosia Tiger Reserve."},
+  {"q": "If the sea mouth of Chilika gets blocked, the first major effect will be:", "h": "", "opts": ["Increase in snowfall", "Disturbance in salinity", "Increase in mountains", "Formation of glaciers"], "ans": 1, "cat": "Chilika Lake", "exp": "Without proper water exchange, the lake's salinity changes, affecting fish, dolphins and birds."},
+  {"q": "What is the meaning of a lagoon?", "h": "", "opts": ["A mountain lake", "A river", "A coastal water body separated from the sea by a sand barrier", "A man-made reservoir"], "ans": 2, "cat": "Chilika Lake", "exp": "A lagoon is generally separated from the sea by a sand bar but remains connected through one or more openings."},
+  {"q": "Bhitarkanika receives water influence from:", "h": "", "opts": ["Only rivers", "Only sea", "Rivers and sea both", "Only rainfall"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "Mix of freshwater + saltwater = estuarine ecosystem."},
+  {"q": "Which of the following is NOT a major purpose of Hirakud Reservoir?", "h": "", "opts": ["Irrigation", "Hydroelectric Power", "Flood Control", "Marine Fishing"], "ans": 3, "cat": "Hirakud Reservoir", "exp": "Hirakud is a freshwater reservoir, not a marine ecosystem."},
+  {"q": "Which season attracts the maximum migratory birds to Tampara Lake?", "h": "", "opts": ["Summer", "Winter", "Monsoon", "Spring"], "ans": 1, "cat": "Tampara Lake", "exp": "Birds migrate during winter in search of food and a suitable climate."},
+  {"q": "An oxbow lake is formed due to:", "h": "", "opts": ["Volcanic eruption", "River changing its course", "Glacier melting", "Ocean currents"], "ans": 1, "cat": "Ansupa Lake", "exp": "An oxbow lake forms when a river cuts off one of its meanders."},
+  {"q": "Satkosia is famous for the conservation of which crocodilian?", "h": "", "opts": ["Saltwater Crocodile", "Gharial", "Nile Crocodile", "American Alligator"], "ans": 1, "cat": "Satkosia Gorge", "exp": "Satkosia is one of the important places for Gharial conservation in Odisha."},
+  {"q": "Nalabana Bird Sanctuary becomes most active during:", "h": "", "opts": ["Summer", "Winter", "Monsoon", "Autumn"], "ans": 1, "cat": "Chilika Lake", "exp": "Lakhs of migratory birds arrive in winter from cold regions."},
+  {"q": "Chilika Lake was designated as a Ramsar Site in:", "h": "", "opts": ["1971", "1982", "1981", "1991"], "ans": 2, "cat": "Chilika Lake", "exp": "Chilika was among the first Indian wetlands to receive Ramsar recognition."},
+  {"q": "Which river is NOT associated with Bhitarkanika?", "h": "", "opts": ["Brahmani", "Baitarani", "Ganga", "Dhamra"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "Ganga is not part of Odisha mangrove system."},
+  {"q": "Hirakud Reservoir became a Ramsar Site because of its:", "h": "", "opts": ["Gold deposits", "Wetland biodiversity", "Oil reserves", "Desert ecosystem"], "ans": 1, "cat": "Hirakud Reservoir", "exp": "It supports rich wetland biodiversity, fish, and migratory birds."},
+  {"q": "Which economic activity is directly supported by Tampara Lake?", "h": "", "opts": ["Iron mining", "Fisheries", "Tea plantation", "Salt mining"], "ans": 1, "cat": "Tampara Lake", "exp": "Fishing provides livelihood to many local families."},
+  {"q": "The shape of an oxbow lake is generally:", "h": "", "opts": ["Circular", "Square", "U-shaped", "Triangular"], "ans": 2, "cat": "Ansupa Lake", "exp": "\"Oxbow\" refers to the U-shaped curve left behind by a river."},
+  {"q": "The Gharial mainly lives in:", "h": "", "opts": ["Sea", "Freshwater rivers", "Mangrove swamps", "Coral reefs"], "ans": 1, "cat": "Satkosia Gorge", "exp": "Gharials are freshwater crocodilians and mainly feed on fish."},
+  {"q": "Which of the following is NOT a migratory bird commonly seen in Chilika?", "h": "", "opts": ["Flamingo", "Northern Pintail", "Pelican", "Ostrich"], "ans": 3, "cat": "Chilika Lake", "exp": "Ostriches are flightless birds found mainly in Africa and do not migrate to Chilika."},
+  {"q": "Which of the following is NOT a district around Chilika Lake?", "h": "", "opts": ["Puri", "Khordha", "Ganjam", "Cuttack"], "ans": 3, "cat": "Chilika Lake", "exp": "Chilika mainly spreads across Puri, Khordha and Ganjam districts."},
+  {"q": "Bhitarkanika is declared as Ramsar Site in:", "h": "", "opts": ["1981", "1990", "2002", "2010"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "Ramsar designation = international wetland importance."},
+  {"q": "Hirakud Reservoir was designated as a Ramsar Site in:", "h": "", "opts": ["1981", "2002", "2021", "2024"], "ans": 2, "cat": "Hirakud Reservoir", "exp": "It received Ramsar designation on 12 October 2021."},
+  {"q": "Tampara Lake is an example of which ecosystem?", "h": "", "opts": ["Desert Ecosystem", "Coastal Wetland Ecosystem", "Mountain Ecosystem", "Grassland Ecosystem"], "ans": 1, "cat": "Tampara Lake", "exp": "It supports aquatic plants, fish, birds, and other wetland species."},
+  {"q": "Ansupa Lake is mainly a:", "h": "", "opts": ["Marine ecosystem", "Freshwater wetland", "Desert ecosystem", "Coral reef"], "ans": 1, "cat": "Ansupa Lake", "exp": "It supports a rich freshwater wetland ecosystem."},
+  {"q": "Which of the following is famous for Saltwater Crocodiles?", "h": "", "opts": ["Satkosia Gorge", "Hirakud Reservoir", "Bhitarkanika Mangroves", "Ansupa Lake"], "ans": 2, "cat": "Satkosia Gorge", "exp": "Bhitarkanika is world-famous for its Saltwater Crocodiles, while Satkosia is associated with Gharials."},
+  {"q": "The famous Irrawaddy Dolphin belongs to which group?", "h": "", "opts": ["Reptiles", "Birds", "Mammals", "Amphibians"], "ans": 2, "cat": "Chilika Lake", "exp": "Like all dolphins, the Irrawaddy Dolphin is a mammal and breathes air through lungs."},
+  {"q": "Fresh water enters Chilika Lake mainly through:", "h": "", "opts": ["Ocean currents", "Rivers", "Rain only", "Underground springs only"], "ans": 1, "cat": "Chilika Lake", "exp": "Many rivers and streams bring fresh water into the lake."},
+  {"q": "Which of the following is a major reptile of Bhitarkanika?", "h": "", "opts": ["Python only", "King Cobra only", "Saltwater crocodile", "Monitor lizard only"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "Crocodile is apex predator of this ecosystem."},
+  {"q": "Which season attracts the maximum migratory birds to Hirakud Reservoir?", "h": "", "opts": ["Summer", "Winter", "Monsoon", "Spring"], "ans": 1, "cat": "Hirakud Reservoir", "exp": "Birds migrate during winter in search of food and suitable climate."},
+  {"q": "Which of the following is NOT commonly associated with Tampara Lake?", "h": "", "opts": ["Aquatic plants", "Migratory birds", "Saltwater crocodiles", "Fish diversity"], "ans": 2, "cat": "Tampara Lake", "exp": "Saltwater crocodiles are mainly associated with Bhitarkanika Mangroves."},
+  {"q": "Which season attracts migratory birds to Ansupa Lake?", "h": "", "opts": ["Summer", "Winter", "Monsoon", "Spring"], "ans": 1, "cat": "Ansupa Lake", "exp": "Birds migrate during winter in search of food and a suitable habitat."},
+  {"q": "Satkosia Gorge mainly supports which ecosystem?", "h": "", "opts": ["Desert ecosystem", "River and Forest ecosystem", "Marine ecosystem", "Tundra ecosystem"], "ans": 1, "cat": "Satkosia Gorge", "exp": "The combination of river and forest creates rich biodiversity."},
+  {"q": "Which economic activity is directly supported by Chilika Lake?", "h": "", "opts": ["Tea plantation", "Fishing", "Coal mining", "Cotton farming"], "ans": 1, "cat": "Chilika Lake", "exp": "Thousands of local fishermen depend on Chilika for their livelihood."},
+  {"q": "Which of the following rivers flows into Chilika Lake?", "h": "", "opts": ["Daya River", "Yamuna River", "Godavari River", "Narmada River"], "ans": 0, "cat": "Chilika Lake", "exp": "The Daya River is one of the important rivers supplying fresh water to Chilika."},
+  {"q": "Olive Ridley Turtle is mainly found in:", "h": "", "opts": ["Forest interior", "Desert area", "Coastal Odisha waters", "Mountain rivers"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "It nests on Odisha coast (not inside mangrove forest)."},
+  {"q": "Which economic activity is directly supported by Hirakud Reservoir?", "h": "", "opts": ["Tea Plantation", "Marine Trade", "Fisheries", "Coal Mining"], "ans": 2, "cat": "Hirakud Reservoir", "exp": "Fisheries provide employment and livelihood to thousands of people."},
+  {"q": "Which of the following is a major threat to Tampara Lake?", "h": "", "opts": ["Glacier movement", "Pollution", "Snowfall", "Volcanoes"], "ans": 1, "cat": "Tampara Lake", "exp": "Pollution degrades water quality and harms biodiversity."},
+  {"q": "Which activity provides livelihood to local people around Ansupa Lake?", "h": "", "opts": ["Coal mining", "Fisheries", "Oil extraction", "Ship building"], "ans": 1, "cat": "Ansupa Lake", "exp": "Fishing is an important source of income for local communities."},
+  {"q": "Which of the following animals is commonly found in Satkosia Tiger Reserve?", "h": "", "opts": ["Polar Bear", "Tiger", "Camel", "Penguin"], "ans": 1, "cat": "Satkosia Gorge", "exp": "Satkosia Tiger Reserve is home to tigers, elephants, leopards and many other wildlife species."},
+  {"q": "Which island of Chilika is famous for its religious importance?", "h": "", "opts": ["Breakfast Island", "Nalabana Island", "Kalijai Island", "Rajhans Island"], "ans": 2, "cat": "Chilika Lake", "exp": "Kalijai Temple is one of Odisha's famous pilgrimage sites located on an island in Chilika Lake."},
+  {"q": "The sea connection of Chilika Lake is important because it:", "h": "", "opts": ["Produces electricity", "Controls water exchange", "Creates waterfalls", "Stops rainfall"], "ans": 1, "cat": "Chilika Lake", "exp": "The sea mouth maintains salinity, fish movement and ecological balance."},
+  {"q": "Mangroves are best described as:", "h": "", "opts": ["Freshwater plants", "Salt-tolerant coastal plants", "Desert plants", "Alpine plants"], "ans": 1, "cat": "Bhitarkanika Mangroves", "exp": "They survive in brackish and saline water."},
+  {"q": "The water stored behind a dam is called:", "h": "", "opts": ["Canal", "Reservoir", "Delta", "Estuary"], "ans": 1, "cat": "Hirakud Reservoir", "exp": "Dam + River = Reservoir (Important Concept)"},
+  {"q": "Aquatic plants in Tampara Lake help by:", "h": "", "opts": ["Producing petroleum", "Improving water quality", "Creating deserts", "Increasing salinity"], "ans": 1, "cat": "Tampara Lake", "exp": "They also provide shelter for fish and support bird habitats."},
+  {"q": "Which of the following is a major threat to Ansupa Lake?", "h": "", "opts": ["Snowfall", "Siltation", "Earthquake", "Volcano"], "ans": 1, "cat": "Ansupa Lake", "exp": "Silt deposition gradually reduces the depth and water-holding capacity of the lake."},
+  {"q": "Which of the following is NOT a major threat to Satkosia?", "h": "", "opts": ["Pollution", "Illegal Fishing", "Habitat Loss", "Glacier Melting"], "ans": 3, "cat": "Satkosia Gorge", "exp": "Pollution, habitat loss and illegal fishing are real threats to Satkosia."},
+  {"q": "The biodiversity of Chilika Lake is high because it has:", "h": "", "opts": ["Only freshwater", "Only seawater", "Mixed aquatic habitats", "No aquatic plants"], "ans": 2, "cat": "Chilika Lake", "exp": "Freshwater, brackish water, islands and marshes together support a wide variety of life."},
+  {"q": "Salinity means:", "h": "", "opts": ["Water depth", "Water temperature", "Amount of salt in water", "Water colour"], "ans": 2, "cat": "Chilika Lake", "exp": "Salinity decides which plants and animals can survive in the lake."},
+  {"q": "Bhitarkanika is also known as:", "h": "", "opts": ["Desert of India", "Mini Amazon of India", "Ice forest", "Inland delta"], "ans": 1, "cat": "Bhitarkanika Mangroves", "exp": "Due to dense forest + river network."},
+  {"q": "Which of the following is a major threat to Hirakud Reservoir?", "h": "", "opts": ["Snowfall", "Siltation", "Volcanic eruption", "Glacier melting"], "ans": 1, "cat": "Hirakud Reservoir", "exp": "Silt reduces the storage capacity of the reservoir."},
+  {"q": "Which pair is correctly matched?", "h": "", "opts": ["Chilika - Reservoir", "Hirakud - Lagoon", "Tampara - Coastal Freshwater Lake", "Bhitarkanika - Reservoir"], "ans": 2, "cat": "Tampara Lake", "exp": "Tampara = Coastal Freshwater Lake"},
+  {"q": "Which pair is correctly matched?", "h": "", "opts": ["Hirakud - Oxbow Lake", "Chilika - Reservoir", "Ansupa - Oxbow Lake", "Bhitarkanika - Lagoon"], "ans": 2, "cat": "Ansupa Lake", "exp": "Ansupa = Oxbow Lake"},
+  {"q": "Which pair is correctly matched?", "h": "", "opts": ["Chilika - Gorge", "Hirakud - Mangrove", "Satkosia - Gorge", "Ansupa - Reservoir"], "ans": 2, "cat": "Satkosia Gorge", "exp": "Satkosia = Gorge"},
+  {"q": "Which of the following is an aquatic plant found in and around Chilika?", "h": "", "opts": ["Cactus", "Mangrove", "Pine", "Deodar"], "ans": 1, "cat": "Chilika Lake", "exp": "Mangroves protect the shoreline and provide shelter to many aquatic organisms."},
+  {"q": "Which part of Chilika generally has higher salinity?", "h": "", "opts": ["Northern part", "Southern part", "Western part", "Central part"], "ans": 1, "cat": "Chilika Lake", "exp": "The southern side is closer to the Bay of Bengal, so it has higher salt content."},
+  {"q": "Which is the main function of mangroves?", "h": "", "opts": ["Produce oil", "Prevent soil erosion and protect coast", "Increase desertification", "Create glaciers"], "ans": 1, "cat": "Bhitarkanika Mangroves", "exp": "Mangroves protect coast from storms and erosion."},
+  {"q": "Which statement is correct?", "h": "", "opts": ["Hirakud is a natural freshwater lake.", "Hirakud is a brackish lagoon.", "Hirakud is an artificial freshwater reservoir.", "Hirakud is a mangrove ecosystem."], "ans": 2, "cat": "Hirakud Reservoir", "exp": "This is one of the favourite conceptual questions in competitive exams."},
+  {"q": "Why was Tampara Lake included in the Ramsar List?", "h": "", "opts": ["Because it is the deepest lake in India", "Because of its international wetland importance", "Because it produces hydroelectric power", "Because it contains mineral deposits"], "ans": 1, "cat": "Tampara Lake", "exp": "Ramsar designation is based on ecological and wetland importance."},
+  {"q": "Why was Ansupa Lake included in the Ramsar List?", "h": "", "opts": ["It has large mineral deposits.", "It is an internationally important freshwater wetland.", "It produces hydroelectric power.", "It is India's deepest lake."], "ans": 1, "cat": "Ansupa Lake", "exp": "Ramsar Sites are recognized for their ecological importance."},
+  {"q": "Satkosia was recognized as a Ramsar Site mainly because of its:", "h": "", "opts": ["Coal reserves", "Rich riverine biodiversity and wetland ecosystem", "Gold deposits", "Petroleum production"], "ans": 1, "cat": "Satkosia Gorge", "exp": "Ramsar recognition is based on ecological and wetland importance."},
+  {"q": "Which of the following is a major fishery product of Chilika Lake?", "h": "", "opts": ["Trout", "Salmon", "Prawn", "Tuna"], "ans": 2, "cat": "Chilika Lake", "exp": "Prawns from Chilika are economically important and support local livelihoods."},
+  {"q": "Nalabana is famous as a:", "h": "", "opts": ["Tiger Reserve", "Bird Sanctuary", "National Park", "Marine Park"], "ans": 1, "cat": "Chilika Lake", "exp": "Nalabana Bird Sanctuary is one of India's most important wintering grounds for migratory birds."},
+  {"q": "Which of the following animals is NOT commonly found in Bhitarkanika?", "h": "", "opts": ["Deer", "Wild boar", "Penguin", "Jackal"], "ans": 2, "cat": "Bhitarkanika Mangroves", "exp": "Penguins live in polar regions, not India."},
+  {"q": "Which pair is correctly matched?", "h": "", "opts": ["Chilika - Mangrove", "Bhitarkanika - Reservoir", "Hirakud - Reservoir", "Ansupa - Dam"], "ans": 2, "cat": "Hirakud Reservoir", "exp": "Hirakud = Reservoir"},
+  {"q": "Which of the following best describes Tampara Lake?", "h": "", "opts": ["Artificial freshwater reservoir", "Natural freshwater coastal lake", "Brackish lagoon", "Mangrove forest"], "ans": 1, "cat": "Tampara Lake", "exp": "This is a very common conceptual question."},
+  {"q": "Which of the following is NOT associated with Ansupa Lake?", "h": "", "opts": ["Aquatic plants", "Migratory birds", "Saltwater crocodiles", "Fish diversity"], "ans": 2, "cat": "Ansupa Lake", "exp": "Saltwater crocodiles are mainly found in Bhitarkanika Mangroves."},
+  {"q": "Which one of the following statements is correct?", "h": "", "opts": ["Satkosia is an artificial reservoir.", "Satkosia is a natural gorge.", "Satkosia is a coastal lagoon.", "Satkosia is a mangrove forest."], "ans": 1, "cat": "Satkosia Gorge", "exp": "This is a very important conceptual question."},
+  {"q": "Which environmental problem reduces the depth of Chilika Lake?", "h": "", "opts": ["Deforestation", "Siltation", "Desertification", "Earthquake"], "ans": 1, "cat": "Chilika Lake", "exp": "Silt carried by rivers settles in the lake, making it shallower over time."},
+  {"q": "Migratory birds visit Chilika mainly during:", "h": "", "opts": ["Summer", "Monsoon", "Winter", "Spring"], "ans": 2, "cat": "Chilika Lake", "exp": "Birds migrate from colder regions where lakes freeze during winter."},
+  {"q": "What type of ecosystem is formed where river meets sea?", "h": "", "opts": ["Desert", "Estuarine ecosystem", "Mountain ecosystem", "Glacier ecosystem"], "ans": 1, "cat": "Bhitarkanika Mangroves", "exp": "Bhitarkanika is a classic estuarine-mangrove system."},
+  {"q": "Which one of the following develops naturally around Hirakud Reservoir?", "h": "", "opts": ["Coral Reef", "Wetland Ecosystem", "Desert", "Glacier"], "ans": 1, "cat": "Hirakud Reservoir", "exp": "The wetland ecosystem is the reason for its Ramsar recognition."},
+  {"q": "Which activity promotes eco-tourism at Tampara Lake?", "h": "", "opts": ["Coal mining", "Bird watching", "Quarrying", "Oil drilling"], "ans": 1, "cat": "Tampara Lake", "exp": "Bird watching is one of the main eco-tourism attractions."},
+  {"q": "Which statement is correct about Ansupa Lake?", "h": "", "opts": ["It is an artificial reservoir.", "It is a natural freshwater oxbow lake.", "It is a brackish lagoon.", "It is a mangrove ecosystem."], "ans": 1, "cat": "Ansupa Lake", "exp": "This is one of the most important concept-based questions."},
+  {"q": "The word 'Gorge' refers to:", "h": "", "opts": ["A deep narrow valley formed by a river", "A large artificial lake", "A coastal wetland", "A mangrove forest"], "ans": 0, "cat": "Satkosia Gorge", "exp": "Rivers cut through rocks over time to form a gorge."},
+  {"q": "Which of the following can harm the ecosystem of Chilika Lake?", "h": "", "opts": ["Pollution", "Overfishing", "Siltation", "All of the above"], "ans": 3, "cat": "Chilika Lake", "exp": "All these factors reduce biodiversity and affect the health of the wetland."},
+  {"q": "Most migratory birds visiting Chilika come from:", "h": "", "opts": ["Australia", "Europe only", "Siberia and Central Asia", "South America"], "ans": 2, "cat": "Chilika Lake", "exp": "Siberia, Russia and Central Asia are major migration regions."},
+  {"q": "Main threat to Bhitarkanika mangroves is:", "h": "", "opts": ["Snowfall", "Cyclones and habitat loss", "Volcanoes", "Earthquakes only"], "ans": 1, "cat": "Bhitarkanika Mangroves", "exp": "Odisha coast is cyclone-prone area."},
+  {"q": "Consider the following statements:\nStatement I: Hirakud Reservoir is built on the Mahanadi River.\nStatement II: Hirakud Reservoir is a natural freshwater lake.", "h": "", "opts": ["Only Statement I is correct.", "Only Statement II is correct.", "Both Statements are correct.", "Both Statements are incorrect."], "ans": 0, "cat": "Hirakud Reservoir", "exp": "Hirakud is not a natural lake; it is an artificial reservoir created by the Hirakud Dam."},
+  {"q": "Consider the following statements:\nStatement I: Tampara Lake is located in Ganjam district.\nStatement II: Tampara Lake is an artificial reservoir.", "h": "", "opts": ["Only Statement I is correct.", "Only Statement II is correct.", "Both Statements are correct.", "Both Statements are incorrect."], "ans": 0, "cat": "Tampara Lake", "exp": "Tampara is a natural coastal freshwater lake, not an artificial reservoir."},
+  {"q": "Consider the following statements:\nStatement I: Ansupa Lake is located in Cuttack district.\nStatement II: Ansupa Lake is formed by constructing a dam.", "h": "", "opts": ["Only Statement I is correct.", "Only Statement II is correct.", "Both Statements are correct.", "Both Statements are incorrect."], "ans": 0, "cat": "Ansupa Lake", "exp": "Ansupa is a natural oxbow lake, not a dam-created reservoir."},
+  {"q": "Consider the following statements:\nStatement I: Satkosia Gorge is formed by the Mahanadi River.\nStatement II: Satkosia is famous for Saltwater Crocodile conservation.", "h": "", "opts": ["Only Statement I is correct.", "Only Statement II is correct.", "Both Statements are correct.", "Both Statements are incorrect."], "ans": 0, "cat": "Satkosia Gorge", "exp": "Satkosia is famous for Gharial conservation, whereas Saltwater Crocodiles are mainly associated with Bhitarkanika."},
+  {"q": "Which organization manages the conservation of Chilika Lake?", "h": "", "opts": ["Wildlife Institute of India", "Chilika Development Authority", "Geological Survey of India", "National Biodiversity Authority"], "ans": 1, "cat": "Chilika Lake", "exp": "The CDA works on ecological restoration, biodiversity conservation and sustainable development."},
+  {"q": "Which famous dolphin is found in Chilika Lake?", "h": "", "opts": ["Bottlenose Dolphin", "Spinner Dolphin", "Irrawaddy Dolphin", "Common Dolphin"], "ans": 2, "cat": "Chilika Lake", "exp": "The Irrawaddy Dolphin is the most famous aquatic mammal of Chilika."},
+  {"q": "Which statement is correct?", "h": "", "opts": ["Chilika is a freshwater lake.", "Chilika is an artificial reservoir.", "Chilika is a brackish water lagoon.", "Chilika is a mountain lake."], "ans": 2, "cat": "Chilika Lake", "exp": "This is one of the most frequently asked facts in Odisha competitive exams."},
+  {"q": "Irrawaddy Dolphin is considered an indicator of:", "h": "", "opts": ["Forest health", "Soil fertility", "Ecosystem health", "Climate"], "ans": 2, "cat": "Chilika Lake", "exp": "A healthy dolphin population usually indicates a healthy aquatic ecosystem."},
+  {"q": "Which of the following is an important tourist activity at Chilika Lake?", "h": "", "opts": ["Snow skiing", "Dolphin watching", "Camel safari", "Ice climbing"], "ans": 1, "cat": "Chilika Lake", "exp": "The Irrawaddy Dolphin is a major attraction for visitors."},
+  {"q": "Which island is famous for its temple?", "h": "", "opts": ["Breakfast Island", "Honeymoon Island", "Kalijai Island", "Rajhans Island"], "ans": 2, "cat": "Chilika Lake", "exp": "Kalijai Temple is one of the most famous pilgrimage sites in Chilika."},
+  {"q": "Which type of ecosystem does Chilika Lake represent?", "h": "", "opts": ["Marine ecosystem only", "Freshwater ecosystem only", "Brackish wetland ecosystem", "Desert ecosystem"], "ans": 2, "cat": "Chilika Lake", "exp": "Chilika combines both freshwater and marine influences, making it a brackish wetland ecosystem."},
+  {"q": "Which activity provides livelihood to thousands of people around Chilika?", "h": "", "opts": ["Coal mining", "Fishing", "Tea plantation", "Steel production"], "ans": 1, "cat": "Chilika Lake", "exp": "Fishing and prawn culture support many local families."},
+  {"q": "Which of the following best describes salinity?", "h": "", "opts": ["Amount of oxygen in water", "Amount of salt in water", "Water temperature", "Water pressure"], "ans": 1, "cat": "Chilika Lake", "exp": "Salinity is a key factor that determines the distribution of aquatic organisms."},
+  {"q": "Which of the following is a major attraction of Chilika Lake?", "h": "", "opts": ["Skiing", "Dolphin watching", "Desert safari", "Snow trekking"], "ans": 1, "cat": "Chilika Lake", "exp": "Dolphin watching attracts thousands of tourists every year."},
+  {"q": "The presence of the Irrawaddy Dolphin mainly indicates:", "h": "", "opts": ["Desert ecosystem", "Healthy aquatic ecosystem", "High mountain ecosystem", "Dry climate"], "ans": 1, "cat": "Chilika Lake", "exp": "The Irrawaddy Dolphin is considered an indicator of a healthy aquatic environment."},
+  {"q": "Flora refers to:", "h": "", "opts": ["Birds", "Fish", "Plants", "Mammals"], "ans": 2, "cat": "Chilika Lake", "exp": "Flora means plant life of a region."},
+  {"q": "Which one of the following is NOT a major importance of Chilika Lake?", "h": "", "opts": ["Biodiversity conservation", "Fisheries", "Tourism", "Iron ore mining"], "ans": 3, "cat": "Chilika Lake", "exp": "Chilika is known for biodiversity, fisheries and tourism, not mining."},
+  {"q": "Fauna refers to:", "h": "", "opts": ["Soil", "Animals", "Water", "Rocks"], "ans": 1, "cat": "Chilika Lake", "exp": "Fauna includes fish, birds, mammals, reptiles and other animals."},
+  {"q": "Which pair is correctly matched?", "h": "", "opts": ["Chilika Lake — Desert Ecosystem", "Nalabana — Bird Sanctuary", "Kalijai Island — Tiger Reserve", "Irrawaddy Dolphin — Reptile"], "ans": 1, "cat": "Chilika Lake", "exp": "Nalabana Bird Sanctuary is one of the most important bird habitats within Chilika Lake."},
+  {"q": "Which is a major threat to Chilika Lake?", "h": "", "opts": ["Siltation", "Snowfall", "Earthquake", "Volcano"], "ans": 0, "cat": "Chilika Lake", "exp": "Siltation makes the lake shallower by depositing mud and sand."},
+  {"q": "Which of the following is NOT a threat to Chilika Lake?", "h": "", "opts": ["Climate change", "Pollution", "Overfishing", "Glacier movement"], "ans": 3, "cat": "Chilika Lake", "exp": "The main threats include pollution, siltation, overfishing and climate change."},
+  {"q": "Which organization is responsible for the conservation and management of Chilika Lake?", "h": "", "opts": ["Forest Survey of India", "Chilika Development Authority", "National Green Tribunal", "Zoological Survey of India"], "ans": 1, "cat": "Chilika Lake", "exp": "The Chilika Development Authority (CDA) works to restore the lake, maintain the sea mouth and conserve biodiversity."},
+  {"q": "Consider the following statements:\nStatement I: Chilika Lake is a Ramsar Site.\nStatement II: Chilika Lake contains brackish water.\nChoose the correct answer.", "h": "", "opts": ["Only Statement I is correct.", "Only Statement II is correct.", "Both Statement I and II are correct.", "Both Statement I and II are incorrect."], "ans": 2, "cat": "Chilika Lake", "exp": "This type of statement-based question is common in OPSC and sometimes in OSSC."},
+  {"q": "Why is Chilika Lake internationally important?", "h": "", "opts": ["It has gold mines.", "It is a Ramsar Site with rich biodiversity.", "It is India's deepest lake.", "It is completely freshwater."], "ans": 1, "cat": "Chilika Lake", "exp": "Chilika is internationally recognized because of its unique brackish water ecosystem, migratory birds, dolphins and rich biodiversity."},
+  {"q": "Which one of the following best explains the international importance of Chilika Lake?", "h": "", "opts": ["It is India's deepest lake.", "It is Asia's largest brackish water lagoon with rich biodiversity and migratory bird habitat.", "It is India's largest artificial reservoir.", "It is a glacier-fed freshwater lake."], "ans": 1, "cat": "Chilika Lake", "exp": "This option combines the key features of Chilika—its size, brackish nature, biodiversity, and importance for migratory birds—which are the reasons for its international recognition as a Ramsar Site."}
+];
+/* ══════════════════════════════════════════
+   STATE LOGIC
+══════════════════════════════════════════ */
+let currentQ = 0;
+let answers = [];
+let userChoices = [];
+let timerSec = 0;
+let timerInterval;
+let TOTAL = 0;
+
+/* ══════════════════════════════════════════
+   INIT
+══════════════════════════════════════════ */
+function init() {
+  TOTAL = questions.length;
+  answers = new Array(TOTAL).fill(null);
+  userChoices = new Array(TOTAL).fill(null);
+  currentQ = 0;
+  timerSec = 0;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timerSec++;
+    const m = String(Math.floor(timerSec/60)).padStart(2,'0');
+    const s = String(timerSec%60).padStart(2,'0');
+    document.getElementById('timerDisplay').textContent = `⏱ ${m}:${s}`;
+  }, 1000);
+
+  buildQNav();
+  renderQuestion();
+  updateScoreboard();
+  
+  // Reset score circle visually
+  document.getElementById('scoreCircle').style.setProperty('--pct', 0);
+  document.getElementById('resultPct').textContent = '0%';
+  
+  document.getElementById('resultsScreen').classList.remove('show');
+  document.getElementById('questionWrapper').style.display = '';
+  document.getElementById('navBar').style.display = '';
+}
+
+/* ══════════════════════════════════════════
+   RENDER QUESTION
+══════════════════════════════════════════ */
+function renderQuestion() {
+  const q = questions[currentQ];
+  const attempted = answers[currentQ] !== null;
+  const userChoice = userChoices[currentQ];
+  const optLetters = ['A','B','C','D'];
+  
+  let optsHTML = '';
+  q.opts.forEach((opt, i) => {
+    let cls = 'option-btn';
+    let icon = '';
+    if (attempted) {
+      if (i === q.ans) { cls += ' correct-opt'; icon = '<span class="result-icon">✔</span>'; }
+      else if (i === userChoice && userChoice !== q.ans) { cls += ' incorrect-opt'; icon = '<span class="result-icon">✘</span>'; }
+    }
+    optsHTML += `
+      <button class="${cls}" onclick="selectAnswer(${i})" ${attempted ? 'disabled' : ''}>
+        <span class="option-key">${optLetters[i]}</span>
+        <span>${opt}</span>
+        ${icon}
+      </button>`;
+  });
+
+  const expDisplay = attempted ? 'show' : '';
+  const html = `
+    <div class="question-card">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+        <span class="q-category">${q.cat}</span>
+      </div>
+      <div class="q-top">
+        <div class="q-number">Q ${currentQ+1}</div>
+        <div>
+          <div class="q-text">${q.q}</div>
+          ${q.h ? `<div class="q-hindi">${q.h}</div>` : ''}
+
+          <img 
+            src="images/${currentQ + 1}.jpg" 
+            alt="Question Image" 
+            style="max-width: 100%; max-height: 250px; border-radius: 8px; margin-top: 15px; display: block;" 
+            onerror="if(!this.dataset.triedPng){ this.dataset.triedPng='true'; this.src='images/${currentQ + 1}.png'; } else { this.style.display='none'; }" 
+          />
+        </div>
+      </div>
+      <div class="options-grid">${optsHTML}</div>
+      <div class="explanation-box ${expDisplay}">
+        💡 <strong>Explanation:</strong> ${q.exp}
+      </div>
+    </div>`;
+
+  document.getElementById('questionWrapper').innerHTML = html;
+  document.getElementById('prevBtn').disabled = currentQ === 0;
+  document.getElementById('nextBtn').disabled = false;
+  document.getElementById('qCounterPill').textContent = `Q ${currentQ+1} / ${TOTAL}`;
+  
+  if (currentQ === TOTAL - 1) {
+    document.getElementById('nextBtn').textContent = 'Submit Test ✓';
+    document.getElementById('nextBtn').classList.add('primary');
+  } else {
+    document.getElementById('nextBtn').textContent = 'Next ▶';
+    document.getElementById('nextBtn').classList.remove('primary');
+  }
+  updateQNav();
+}
+
+function selectAnswer(i) {
+  if (answers[currentQ] !== null) return;
+  userChoices[currentQ] = i;
+  answers[currentQ] = (i === questions[currentQ].ans) ? 'correct' : 'incorrect';
+  updateScoreboard();
+  renderQuestion();
+}
+
+function navigate(dir) {
+  if (dir === 1 && currentQ === TOTAL - 1) { showResults(); return; }
+  currentQ = Math.max(0, Math.min(TOTAL - 1, currentQ + dir));
+  renderQuestion();
+}
+function goToQuestion(idx) { currentQ = idx; renderQuestion(); }
+
+function updateScoreboard() {
+  const attempted = answers.filter(a => a !== null).length;
+  const correct = answers.filter(a => a === 'correct').length;
+  const incorrect = answers.filter(a => a === 'incorrect').length;
+  const remaining = TOTAL - attempted;
+  const pct = Math.round((attempted / TOTAL) * 100) || 0;
+
+  document.getElementById('sTotal').textContent = TOTAL;
+  document.getElementById('sAttempted').textContent = attempted;
+  document.getElementById('sCorrect').textContent = correct;
+  document.getElementById('sIncorrect').textContent = incorrect;
+  document.getElementById('sRemaining').textContent = remaining;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+}
+
+function buildQNav() {
+  const grid = document.getElementById('qnavGrid');
+  grid.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'qnav-btn';
+    btn.textContent = i + 1;
+    btn.onclick = () => goToQuestion(i);
+    btn.id = `qnav-${i}`;
+    grid.appendChild(btn);
+  }
+}
+function updateQNav() {
+  for (let i = 0; i < TOTAL; i++) {
+    const btn = document.getElementById(`qnav-${i}`);
+    if (!btn) continue;
+    btn.className = 'qnav-btn';
+    if (i === currentQ) btn.classList.add('current');
+    else if (answers[i] === 'correct') btn.classList.add('correct');
+    else if (answers[i] === 'incorrect') btn.classList.add('incorrect');
+  }
+}
+
+/* ══════════════════════════════════════════
+   RESULTS, ANIMATION & TABLE
+══════════════════════════════════════════ */
+function showResults() {
+  clearInterval(timerInterval);
+  const correct = answers.filter(a => a === 'correct').length;
+  const incorrect = answers.filter(a => a === 'incorrect').length;
+  const skipped = answers.filter(a => a === null).length;
+  const finalPct = Math.round((correct / TOTAL) * 100) || 0;
+
+  document.getElementById('questionWrapper').style.display = 'none';
+  document.getElementById('navBar').style.display = 'none';
+
+  const rs = document.getElementById('resultsScreen');
+  rs.classList.add('show');
+  
+  document.getElementById('rTotal').textContent = TOTAL;
+  document.getElementById('rCorrect').textContent = correct;
+  document.getElementById('rIncorrect').textContent = incorrect;
+  document.getElementById('rSkipped').textContent = skipped;
+
+  let grade = finalPct >= 80 ? '🏆 Excellent!' : finalPct >= 60 ? '👍 Good Performance!' : finalPct >= 40 ? '📚 Needs Improvement' : '💪 Keep Practicing!';
+  rs.querySelector('.result-title').textContent = grade;
+
+  // Render Detailed Table
+  const tbody = document.getElementById('results-tbody');
+  tbody.innerHTML = '';
+  questions.forEach((q, i) => {
+    const status = answers[i];
+    const userAns = status === null ? '—' : q.opts[userChoices[i]];
+    const correctAns = q.opts[q.ans];
+    
+    let badge = status === null ? `<span class="status-badge badge-skipped">— Skipped</span>` : 
+                status === 'correct' ? `<span class="status-badge badge-correct">✓ Correct</span>` : 
+                `<span class="status-badge badge-wrong">✗ Wrong</span>`;
+    
+    let userColor = status === null ? 'var(--muted)' : status === 'correct' ? 'var(--green)' : 'var(--red)';
+    
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${i + 1}</td>
+      <td><span style="font-weight:700;color:var(--blue);font-size:0.75rem">${q.cat}</span></td>
+      <td>${q.q}</td>
+      <td style="color:${userColor}; font-weight:600">${userAns}</td>
+      <td style="color:var(--green); font-weight:600">${correctAns}</td>
+      <td>${badge}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  // Animated Score Counter
+  let currentPct = 0;
+  const stepTime = 20; 
+  const duration = 1200; 
+  const steps = duration / stepTime;
+  const increment = finalPct / steps;
+
+  if (finalPct === 0) {
+    document.getElementById('scoreCircle').style.setProperty('--pct', 0);
+    document.getElementById('resultPct').textContent = '0%';
+    return;
+  }
+
+  const animationTimer = setInterval(() => {
+    currentPct += increment;
+    if (currentPct >= finalPct) {
+      currentPct = finalPct;
+      clearInterval(animationTimer);
+    }
+    document.getElementById('scoreCircle').style.setProperty('--pct', currentPct);
+    document.getElementById('resultPct').textContent = Math.round(currentPct) + '%';
+  }, stepTime);
+}
+
+/* ══════════════════════════════════════════
+   EXPORT TO EXCEL (CSV)
+══════════════════════════════════════════ */
+function exportWrongToExcel() {
+  const wrongQuestions = questions.filter((q, i) => answers[i] === 'incorrect');
+  
+  if (wrongQuestions.length === 0) {
+    alert('🎉 Congratulations! You have no wrong answers to export.');
+    return;
+  }
+
+  const escape = str => `"${String(str).replace(/"/g, '""')}"`;
+  const headers = ['Category', 'Question', 'Your Answer', 'Correct Answer', 'Explanation'];
+  
+  const rows = wrongQuestions.map(q => {
+    const originalIndex = questions.indexOf(q);
+    const userAns = q.opts[userChoices[originalIndex]];
+    const correctAns = q.opts[q.ans];
+    return [q.cat, q.q, userAns, correctAns, q.exp].map(escape);
+  });
+
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Revision_Wrong_Answers.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function restartTest() { init(); }
+
+/* START */
+init();
+</script>
+</body>
+</html>
